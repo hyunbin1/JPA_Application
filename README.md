@@ -17,3 +17,9 @@
   - 상품의 종류는 도서, 음반, 영화가 있다.
   - 상품을 카테고리로 구분할 수 있다.
   - 상품 주문시 배송 정보를 입력할 수 있다.
+
+
+
+### 회원 엔티티 분석(ERD)
+---
+![image](https://github.com/hyunbin1/JPA_Application1/assets/63040492/0e307d91-7bc9-4873-b1db-5491d444bcf8)
