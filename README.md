@@ -23,3 +23,7 @@
 ### 회원 엔티티 분석(ERD)
 ---
 ![image](https://github.com/hyunbin1/JPA_Application1/assets/63040492/0e307d91-7bc9-4873-b1db-5491d444bcf8)
+
+### 회원 테이블 분석
+---
+![image](https://github.com/hyunbin1/JPA_Application1/assets/63040492/3fcbaf48-0925-4d5a-a8bb-b850b2dc7ca6)
