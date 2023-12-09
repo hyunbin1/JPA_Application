@@ -1,6 +1,13 @@
 HELP.md
 .gradle
 build/
+caches/
+daemon/
+gradle/
+jdks/
+native/
+wrapper/
+
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
