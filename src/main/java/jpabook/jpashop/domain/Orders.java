@@ -32,7 +32,7 @@ public class Orders {
     private LocalDateTime orderDateTime;
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus status; // 주문상태, [Order, Cancel] 2가지 상태를 가짐
+    private OrderStatus orderStatus; // 주문상태, [Order, Cancel] 2가지 상태를 가짐
 
 
     //==연관관계 편의 메서드==// 양방향 연관관계일 경우 컨트롤 하는 곳에서 가지고 있는 것이 좋다.
@@ -52,7 +52,6 @@ public class Orders {
     }
 
 
-//
 //    public static void main(String[] args) {
 //        Member member = new Member();
 //        Orders order = new Orders();
@@ -62,7 +61,41 @@ public class Orders {
 //
 //    }
 
+    //== 생성 메서드 ==//
+    /* 주문 생성 */
+    public static Orders createOrder(Member member, Delivery delivery, OrderItem... orderItems) {
+        Orders order = new Orders();
+        order.setMember(member);
+        order.setDelivery(delivery);
+        for (OrderItem orderItem : orderItems) {
+            order.addOrderItem(orderItem);
+        }
+        order.setOrderStatus(OrderStatus.ORDER);
+        order.setOrderDateTime(LocalDateTime.now());
+        return order;
+    }
 
 
+    //== 비즈니스 로직 ==//
+    public void orderCancel() {
+        if(delivery.getDeliveryStatus() == DeliveryStatus.COMP) {
+            throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다.");
+        }
+        this.setOrderStatus(OrderStatus.CANCEL);
+        for (OrderItem orderItem: orderItems) {
+            orderItem.cancel();
+        }
+    }
+
+    // == 조회 로직 ==//
+    /* 전체 주문 가격 조회 */
+    public int getTotalPrice() {
+        int totalPrice = 0;
+        for (OrderItem orderItem: orderItems) {
+            totalPrice += orderItem.getTotalPrice();
+        }
+
+        return totalPrice;
+    }
 }
 
