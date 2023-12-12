@@ -6,12 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Repository
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class orderRepository {
+public class OrderRepository {
     private final EntityManager entityManager;
 
     public void saveOrder(Orders order) {
