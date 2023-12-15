@@ -4,6 +4,7 @@ package jpabook.jpashop.controller;
 import jakarta.validation.Valid;
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Member;
+import jpabook.jpashop.forms.MemberForm;
 import jpabook.jpashop.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -42,6 +43,7 @@ public class MemberController {
 
     @GetMapping("/members")
     public String memberList(Model model) {
+        // entity를 건들어야한다면 member을 사용하지 말고 dto를 따로 만들어서 사용하기
         List<Member> members= memberService.findAllMember();
         model.addAttribute("members", members);
         return "members/memberList";
