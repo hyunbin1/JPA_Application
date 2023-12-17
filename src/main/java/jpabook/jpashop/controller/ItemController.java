@@ -47,24 +47,25 @@ public class ItemController {
     }
 
     // 상품 수정
-    @GetMapping("items/{itemId}/edit")
-    public String updateItemForm(@PathVariable("itemId") Long itemId, Model model) {
+    @GetMapping(value = "/items/{itemId}/edit")
+    public String updateItemForm(@PathVariable("itemId") Long itemId, Model
+            model) {
         Book item = (Book) itemService.findItem(itemId);
-
-        BookForm bookForm = new BookForm();
-        bookForm.setBookId(item.getItemId());
-        bookForm.setName(item.getItemName());
-        bookForm.setBookPrice(item.getPrice());
-        bookForm.setStockQuantity(item.getStockQuantity());
-        bookForm.setAuthor(item.getAuthor());
-        bookForm.setIsbn(item.getIsbn());
-
-        model.addAttribute("form", bookForm);
+        BookForm form = new BookForm();
+        form.setBookId(item.getItemId());
+        form.setName(item.getItemName());
+        form.setBookPrice(item.getPrice());
+        form.setStockQuantity(item.getStockQuantity());
+        form.setAuthor(item.getAuthor());
+        form.setIsbn(item.getIsbn());
+        model.addAttribute("form", form);
         return "items/updatedItemForm";
     }
-
-    @PostMapping("items/{itemId}/edit")
-    public String updateItem(@PathVariable String itemId, @ModelAttribute("bookForm") BookForm form) {
+    /**
+     * 상품 수정
+     */
+    @PostMapping(value = "/items/{itemId}/edit")
+    public String updateItem(@PathVariable String itemId, @ModelAttribute("form") BookForm form ) {
         Book book = new Book();
         book.setItemId(form.getBookId());
         book.setItemName(form.getName());
@@ -72,7 +73,6 @@ public class ItemController {
         book.setStockQuantity(form.getStockQuantity());
         book.setAuthor(form.getAuthor());
         book.setIsbn(form.getIsbn());
-
         itemService.saveItem(book);
         return "redirect:/items";
     }
