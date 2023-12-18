@@ -1,6 +1,7 @@
 package jpabook.jpashop.service;
 
 
+import jpabook.jpashop.domain.item.Book;
 import jpabook.jpashop.domain.item.Items;
 import jpabook.jpashop.repository.ItemsRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,14 @@ public class ItemService {
         return itemsRepository.findItemsList();
     }
 
+    @Transactional
+    public Items updateItem(Long itemId, Book book) {
+        Items findItem = itemsRepository.findOne(itemId);
+        // findItem.change(price, name, stockQuantity); 와같이 의미있는 메서드를 사용할 것. change 메서드는 엔티티에서 작성
+        findItem.setPrice(book.getPrice());
+        findItem.setItemName(book.getItemName());
+        findItem.setStockQuantity(book.getStockQuantity());
+        return findItem;
+    }
 
 }
