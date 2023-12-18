@@ -30,13 +30,13 @@ public class ItemService {
     }
 
     @Transactional
-    public Items updateItem(Long itemId, Book book) {
+    public void updateItem(Long itemId, String bookName, int price, int stockQuantity) {
+        // 파라미터가 많으면 dto 만들어서 사용하면 편하다.
         Items findItem = itemsRepository.findOne(itemId);
         // findItem.change(price, name, stockQuantity); 와같이 의미있는 메서드를 사용할 것. change 메서드는 엔티티에서 작성
-        findItem.setPrice(book.getPrice());
-        findItem.setItemName(book.getItemName());
-        findItem.setStockQuantity(book.getStockQuantity());
-        return findItem;
+        findItem.setItemName(bookName);
+        findItem.setPrice(price);
+        findItem.setStockQuantity(stockQuantity);
     }
 
 }
