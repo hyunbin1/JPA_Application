@@ -56,9 +56,9 @@ public class OrderService {
     }
 
     /* 주문 검색 */
-//    public List<Orders> searchOrders(OrderSearch orderSearch) {
-//        return orderRepository.findAll(orderSearch);
-//    }
+    public List<Orders> findOrders(OrderSearch orderSearch) {
+        return orderRepository.findAllOrders(orderSearch);
+    }
 
 
 
