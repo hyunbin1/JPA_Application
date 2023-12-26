@@ -36,16 +36,16 @@ public class OrderRepository {
         List<Predicate> criteria = new ArrayList<>();
         //주문 상태 검색
         if (orderSearch.getOrderStatus() != null) {
-            Predicate status = cb.equal(o.get("status"),
+            Predicate orderStatus = cb.equal(o.get("orderStatus"),
                     orderSearch.getOrderStatus());
-            criteria.add(status);
+            criteria.add(orderStatus);
         }
         //회원 이름 검색
         if (StringUtils.hasText(orderSearch.getMemberName())) {
-            Predicate name =
-                    cb.like(m.<String>get("name"), "%" +
+            Predicate username =
+                    cb.like(m.<String>get("username"), "%" +
                             orderSearch.getMemberName() + "%");
-            criteria.add(name);
+            criteria.add(username);
         }
         cq.where(cb.and(criteria.toArray(new Predicate[criteria.size()])));
         TypedQuery<Orders> query = entityManager.createQuery(cq).setMaxResults(1000); //최대 1000건
