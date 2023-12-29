@@ -1,6 +1,7 @@
 package jpabook.jpashop.api;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.service.MemberService;
 import lombok.Data;
@@ -22,8 +23,25 @@ public class MemberApiController {
         return new CreateMemberResponse(id);
     }
 
+    @PostMapping("/api/v2/members")
+    public CreateMemberResponse saveMemberV2(@RequestBody @Valid CreateMemberRequest request) {
+        Member member = new Member();
+        member.setUsername(request.name);
+
+
+        Long id = memberService.join(member);
+        return new CreateMemberResponse(id);
+    }
+
+    @Data
+    static class CreateMemberRequest{
+        private String name; // postman json에도 username이 아닌 name으로 작성해야한다.
+    }
+
+
     @Data
     static class CreateMemberResponse {
+        @NotEmpty
         private Long id;
 
         public CreateMemberResponse(Long id) {
