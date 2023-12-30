@@ -10,11 +10,45 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @RestController
 @RequiredArgsConstructor
 public class MemberApiController {
     private final MemberService memberService;
+
+    @GetMapping("/api/v1/members")
+    public List<Member> membersV1() {
+        //이렇게 member을 모두 리턴해버리면 엔티티가 외부에 노출이 되게 되고 필요 없는 값까지 모두 가져오게 된다. 어레이로 가져오기때문에 확장성도 떨어진다.
+        // 그렇다고 엔티티에 jsonIgnore 어노테이션을 쓰는것은 다른 API를 만들때 문제가 된다.
+        return memberService.findAllMember();
+    }
+
+
+    @GetMapping("/api/v2/members")
+    public Result getMembersV2() {
+        List<Member> findAllMembers = memberService.findAllMember();
+        List<MemberDto> collect = findAllMembers
+                .stream()
+                .map(m -> new MemberDto(m.getUsername()))
+                .collect(Collectors.toList());
+        return new Result(collect.size(), collect);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MemberDto {
+        private String name;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T> { // 이런식으로 배열로 감싸서 json으로 반환해야 확장성이 보장된다.
+        private int count;
+        private T data;
+    }
 
     @PostMapping("/api/v1/members")
     public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member) {
