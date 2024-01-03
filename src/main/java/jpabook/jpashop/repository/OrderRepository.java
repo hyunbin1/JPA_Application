@@ -7,7 +7,6 @@ import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.domain.Orders;
 import jpabook.jpashop.service.OrderSearch;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -61,4 +60,5 @@ public class OrderRepository {
                 ).getResultList();
 
     }
+
 }

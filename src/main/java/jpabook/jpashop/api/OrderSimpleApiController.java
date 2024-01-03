@@ -3,7 +3,9 @@ package jpabook.jpashop.api;
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.domain.Orders;
+import jpabook.jpashop.repository.order.simplequery.OrderQuerySimpleDto;
 import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryRepository;
 import jpabook.jpashop.service.OrderSearch;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderSimpleApiController {
     private final OrderRepository orderRepository;
+    private final OrderSimpleQueryRepository orderSimpleQueryRepository;
 
 
     // postman aborted 오류는 무한루프로 인한 것이다. 양방향 연관관계에서는 dto를 만들어서 한 쪽은 필수적으로 jsonIgnore 해주어야한다.
@@ -61,6 +64,18 @@ public class OrderSimpleApiController {
                 .collect(Collectors.toList());
         return result;
     }
+
+    // api 스팩에 맞춰서 쿼리를 직접 짠 것이다. repository는 엔티티 객체 그래프들을 조회하는데 사용하는 곳이다. 따라서 v3가 좀 더 확장 가능하고,
+    // v4 경우에는 논리적으로는 계층이 파괴된 것과 같다는 단점이 있다. api 스팩이 repository에 들어와 았는 것과 같다.
+    // 하지만 성능은 v3보다야 좋지만 성능은 미미하다. v3 사용할것.
+    // 리파지토리에서 sql 혹은 api 스팩을 직접적으로 사용하지 않아, 계층을 파괴하지 않기 위해서 따로 패키지를 만들어준다.
+    @GetMapping("/api/v4/simple-orders")
+    public List<OrderQuerySimpleDto> ordersV4() {
+        return orderSimpleQueryRepository.findOrderDtos();
+    }
+
+
+
 
     @Data
     static class SimpleOrderDto {
