@@ -43,6 +43,20 @@ public class OrderApiController {
         return collect;
     }
 
+    @GetMapping("/api/v3/orders")
+    public List<OrderDto> ordersV3() {
+        List<Orders> orders = orderRepository.findWithItem();
+
+        for(Orders order : orders) {
+            System.out.println("order ref=" + order + " id=" + order.getOrderId());
+        }
+
+        List<OrderDto> result = orders.stream()
+                .map(o-> new OrderDto(o))
+                .collect(Collectors.toList());
+
+        return result;
+    }
     @Data // no properties 오류는 보통 게터 세터가 없어서 그렇다.
     static class OrderDto {
         private Long orderId;

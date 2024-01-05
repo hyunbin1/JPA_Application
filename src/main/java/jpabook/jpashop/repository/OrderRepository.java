@@ -61,4 +61,18 @@ public class OrderRepository {
 
     }
 
+    // 컬렉션은 페치 조인을 하게되면 db에서 order에 관한건 뻥튀기가 된다.
+    // distinct 를 추가해주는 것이 해결 방안이지만, hibernate 6.0 부터는 자동 적용된다.
+    // distict는 db는 서로 다른 제품을 샀을 경우에는 그대로 남아있지만, jpa에서는 애플리케이션 컬렉션에 담을 때 order 아이디가 동일하면 중복을 제거해준다.
+    // 엔티티가 중복인 경우에 걸러서 컬렉션에 담아주는 역할을 하는 것.
+    // 가장 큰 단점은 페이징이 불가능하다는 점에 있다.
+    public List<Orders> findWithItem() {
+        return entityManager.createQuery(
+                "select distinct o from Orders o " +
+                        "join fetch o.member m " +
+                        "join fetch o.delivery d " +
+                        "join fetch o.orderItems oi " +
+                        "join fetch oi.item i", Orders.class)
+                .getResultList();
+    }
 }
