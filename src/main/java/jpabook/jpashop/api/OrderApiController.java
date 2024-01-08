@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -57,6 +58,19 @@ public class OrderApiController {
 
         return result;
     }
+
+    @GetMapping("/api/v3.1/orders")
+    public List<OrderDto> ordersV3_page(@RequestParam(value = "offset", defaultValue = "0") int offset,
+                                        @RequestParam(value = "limit", defaultValue = "0") int limit
+                                        ) {
+        List<Orders> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
+
+        List <OrderDto> result = orders.stream()
+                .map(o-> new OrderDto(o))
+                .collect(Collectors.toList());
+        return result;
+    }
+
     @Data // no properties 오류는 보통 게터 세터가 없어서 그렇다.
     static class OrderDto {
         private Long orderId;
