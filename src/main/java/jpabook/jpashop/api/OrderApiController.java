@@ -5,6 +5,8 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.domain.Orders;
 import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.repository.order.query.OrderQueryDto;
+import jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import jpabook.jpashop.service.OrderSearch;
 import lombok.Data;
 import lombok.Getter;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderApiController {
     private final OrderRepository orderRepository;
+    private final OrderQueryRepository orderQueryRepository;
 
     @GetMapping("/api/v1/orders")
     public List<Orders> ordersV1() {
@@ -70,6 +73,12 @@ public class OrderApiController {
                 .collect(Collectors.toList());
         return result;
     }
+
+    @GetMapping("/api/v4/orders")
+    public List<OrderQueryDto> ordersV4() {
+        return orderQueryRepository.findOrderQueryDtos();
+    }
+
 
     @Data // no properties 오류는 보통 게터 세터가 없어서 그렇다.
     static class OrderDto {
