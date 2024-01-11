@@ -2,6 +2,7 @@ package jpabook.jpashop.service;
 
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.repository.MemberRepository;
+import jpabook.jpashop.repository.MemberRepositoryOld;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,14 +35,14 @@ public class MemberService {
     /* 한명 회원 조회하기 */
     @Transactional(readOnly = true)
     public Member findOneMember(Long memberId) {
-        return memberRepository.findOne(memberId);
+        return memberRepository.findById(memberId).get();
     }
 
 
     // 중복 회원 검증 메서드
     @Transactional(readOnly = true)
     public void validationDuplicateMember(Member member) {
-        List<Member> findMembers = memberRepository.findMemberByUsername(member.getUsername());
+        List<Member> findMembers = memberRepository.findByUsername(member.getUsername());
         if(!findMembers.isEmpty()) {
             throw new IllegalStateException("이미 존재하는 회원입니다. 다른 아이디를 입력해주시길 바랍니다.");
         }
@@ -49,7 +50,7 @@ public class MemberService {
 
     @Transactional
     public void update(Long id, String name) {
-        Member member = memberRepository.findOne(id);
+        Member member = memberRepository.findById(id).get();
         member.setUsername(name);
     }
 }
