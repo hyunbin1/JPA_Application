@@ -80,6 +80,12 @@ public class OrderApiController {
     }
 
 
+    @GetMapping("/api/v5/orders")
+    public List<OrderQueryDto> ordersV5() {
+        return orderQueryRepository.findAllByDto_optimization();
+    }
+
+
     @Data // no properties 오류는 보통 게터 세터가 없어서 그렇다.
     static class OrderDto {
         private Long orderId;
