@@ -52,7 +52,18 @@ public class OrderQueryRepository {
 
 
     }
+// 이 방법은 쿼리를 한번에 불러낼 수 있다. 하지만 이것은 페이징을 할 수 없다는 한계가 있었다.
+    public List<OrderFlatDto> findAllByDto_flat() {
+        return entityManager.createQuery(
+                "select new jpabook.jpashop.repository.order.query.OrderFlatDto(o.orderId, m.username, o.orderDateTime, o.orderStatus, d.address, i.itemName, oi.orderPrice, oi.count)" +
+                        " from Orders o" +
+                        " join o.member m" +
+                        " join o.delivery d" +
+                        " join o.orderItems oi" +
+                        " join oi.item i", OrderFlatDto.class).getResultList();
+    }
 
+    // 서브 메서드 //
     private Map<Long, List<OrderItemQueryDto>> findOrderItemMap(List<Long> orderIds) {
         List<OrderItemQueryDto> orderItems = entityManager.createQuery(
                         " select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.itemName, oi.orderPrice, oi.count) " +
@@ -74,4 +85,6 @@ public class OrderQueryRepository {
                 .collect(Collectors.toList());
         return orderIds;
     }
+
+
 }
