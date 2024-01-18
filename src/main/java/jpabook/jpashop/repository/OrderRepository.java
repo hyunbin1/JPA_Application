@@ -1,10 +1,9 @@
 package jpabook.jpashop.repository;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.*;
-import jpabook.jpashop.domain.Member;
-import jpabook.jpashop.domain.Orders;
+import jpabook.jpashop.domain.*;
 import jpabook.jpashop.service.OrderSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -14,11 +13,22 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jpabook.jpashop.domain.QMember.*;
+import static jpabook.jpashop.domain.QMember.member;
+import static jpabook.jpashop.domain.QOrders.orders;
+
 @Repository
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
+//@RequiredArgsConstructor
+//@Transactional(readOnly = true)
 public class OrderRepository {
     private final EntityManager entityManager;
+    private final JPAQueryFactory query;
+
+    public OrderRepository(EntityManager entityManager) {
+        this.entityManager = entityManager;
+        this.query = new JPAQueryFactory((entityManager));
+    }
+
 
     public void saveOrder(Orders order) {
         entityManager.persist(order);
@@ -29,28 +39,56 @@ public class OrderRepository {
     }
 
     public List<Orders> findAllOrders(OrderSearch orderSearch) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Orders> cq = cb.createQuery(Orders.class);
-        Root<Orders> o = cq.from(Orders.class);
-        Join<Orders, Member> m = o.join("member", JoinType.INNER); //회원과 조인
-        List<Predicate> criteria = new ArrayList<>();
-        //주문 상태 검색
-        if (orderSearch.getOrderStatus() != null) {
-            Predicate orderStatus = cb.equal(o.get("orderStatus"),
-                    orderSearch.getOrderStatus());
-            criteria.add(orderStatus);
-        }
-        //회원 이름 검색
-        if (StringUtils.hasText(orderSearch.getMemberName())) {
-            Predicate username =
-                    cb.like(m.<String>get("username"), "%" +
-                            orderSearch.getMemberName() + "%");
-            criteria.add(username);
-        }
-        cq.where(cb.and(criteria.toArray(new Predicate[criteria.size()])));
-        TypedQuery<Orders> query = entityManager.createQuery(cq).setMaxResults(1000); //최대 1000건
-        return query.getResultList();
+//        JPAQueryFactory query = new JPAQueryFactory(entityManager);
+//        QOrders order = QOrders.orders; // static import로 줄여서 사용할 수 있다.
+//        QMember member = QMember.member;
+
+        return query
+                .select(orders)
+                .from(orders)
+                .join(orders.member, member)
+                .where(statusEq(orderSearch.getOrderStatus()), nameLike(orderSearch.getMemberName()))
+                .limit(1000)
+                .fetch();
     }
+
+    private BooleanExpression nameLike(String memberName) {
+        if(!StringUtils.hasText(memberName)){
+            return null;
+        }
+        return member.username.like(memberName);
+    }
+
+    private BooleanExpression statusEq(OrderStatus statusCondition){
+        if(statusCondition == null) {
+            return null;
+        }
+        return orders.orderStatus.eq(statusCondition);
+    }
+
+//    public List<Orders> findAllOrders(OrderSearch orderSearch) {
+//        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+//        CriteriaQuery<Orders> cq = cb.createQuery(Orders.class);
+//        Root<Orders> o = cq.from(Orders.class);
+//        Join<Orders, Member> m = o.join("member", JoinType.INNER); //회원과 조인
+//        List<Predicate> criteria = new ArrayList<>();
+//        //주문 상태 검색
+//        if (orderSearch.getOrderStatus() != null) {
+//            Predicate orderStatus = cb.equal(o.get("orderStatus"),
+//                    orderSearch.getOrderStatus());
+//            criteria.add(orderStatus);
+//        }
+//        //회원 이름 검색
+//        if (StringUtils.hasText(orderSearch.getMemberName())) {
+//            Predicate username =
+//                    cb.like(m.<String>get("username"), "%" +
+//                            orderSearch.getMemberName() + "%");
+//            criteria.add(username);
+//        }
+//        cq.where(cb.and(criteria.toArray(new Predicate[criteria.size()])));
+//        TypedQuery<Orders> query = entityManager.createQuery(cq).setMaxResults(1000); //최대 1000건
+//        return query.getResultList();
+//    }
 
     public List<Orders> findAllWithMemberDelivery() {
         return entityManager.createQuery(
